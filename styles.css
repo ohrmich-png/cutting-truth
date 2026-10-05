@@ -272,3 +272,6 @@ footer {
 
 /* stacked teasers */
 .teaser + .teaser { margin-top: 1.5rem; }
+
+/* ---------- comments ---------- */
+.comments .giscus, #feedback .giscus { max-width: 46rem; }
