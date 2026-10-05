@@ -274,4 +274,4 @@ footer {
 .teaser + .teaser { margin-top: 1.5rem; }
 
 /* ---------- comments ---------- */
-.comments .giscus, #feedback .giscus { max-width: 46rem; }
+#cusdis_thread { max-width: 46rem; }
