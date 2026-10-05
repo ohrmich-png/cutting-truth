@@ -269,3 +269,6 @@ footer {
   .reel-progress span.run { animation: none; width: 100%; }
   .ticker-track { animation: none; }
 }
+
+/* stacked teasers */
+.teaser + .teaser { margin-top: 1.5rem; }
