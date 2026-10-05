@@ -1,0 +1,223 @@
+:root {
+  --bg: #0a0a0b;
+  --bg-soft: #111113;
+  --ink: #f5f4f0;
+  --muted: #9a978f;
+  --line: rgba(245, 244, 240, 0.14);
+  --accent: #ff3131;
+  --font: "Archivo", -apple-system, "Segoe UI", sans-serif;
+}
+
+* { margin: 0; padding: 0; box-sizing: border-box; }
+
+html { scroll-behavior: smooth; }
+
+body {
+  background: var(--bg);
+  color: var(--ink);
+  font-family: var(--font);
+  -webkit-font-smoothing: antialiased;
+  line-height: 1.5;
+}
+
+.sr {
+  position: absolute; width: 1px; height: 1px;
+  overflow: hidden; clip: rect(0 0 0 0); white-space: nowrap;
+}
+
+/* ---------- nav ---------- */
+.nav {
+  position: sticky; top: 0; z-index: 50;
+  display: flex; align-items: center; justify-content: space-between;
+  padding: 1rem 2rem;
+  background: rgba(10, 10, 11, 0.85);
+  backdrop-filter: blur(12px);
+  border-bottom: 1px solid var(--line);
+}
+.brand {
+  color: var(--ink); text-decoration: none;
+  font-weight: 900; letter-spacing: 0.14em; font-size: 0.95rem;
+}
+.brand::after {
+  content: ""; display: inline-block; width: 0.5em; height: 0.5em;
+  background: var(--accent); margin-left: 0.5em; vertical-align: baseline;
+}
+.nav .links { display: flex; gap: 1.75rem; }
+.nav .links a {
+  color: var(--muted); text-decoration: none;
+  font-size: 0.82rem; font-weight: 500; letter-spacing: 0.08em; text-transform: uppercase;
+  transition: color 0.2s;
+}
+.nav .links a:hover { color: var(--ink); }
+
+/* ---------- hero ---------- */
+.hero {
+  display: grid; grid-template-columns: 1.1fr 0.9fr;
+  gap: 4rem; align-items: center;
+  max-width: 1200px; margin: 0 auto;
+  padding: 5rem 2rem 6rem;
+}
+.kicker {
+  color: var(--accent); font-size: 0.8rem; font-weight: 700;
+  letter-spacing: 0.22em; text-transform: uppercase; margin-bottom: 1.25rem;
+}
+.hero h1 {
+  font-size: clamp(3.5rem, 8vw, 6.5rem);
+  font-weight: 900; line-height: 0.92; letter-spacing: -0.02em;
+  margin-bottom: 1.5rem;
+}
+.tagline {
+  font-size: 1.35rem; font-weight: 700; line-height: 1.35;
+  margin-bottom: 1.25rem;
+}
+.mission { color: var(--muted); max-width: 34rem; margin-bottom: 2rem; }
+.hero-cta { display: flex; gap: 1rem; flex-wrap: wrap; }
+.btn {
+  display: inline-block; padding: 0.85rem 1.6rem;
+  background: var(--accent); color: #fff; text-decoration: none;
+  font-weight: 700; font-size: 0.9rem; letter-spacing: 0.04em;
+  transition: transform 0.15s, background 0.2s;
+}
+.btn:hover { background: #e02626; transform: translateY(-2px); }
+.btn.ghost {
+  background: transparent; color: var(--ink);
+  border: 1px solid var(--line);
+}
+.btn.ghost:hover { border-color: var(--ink); background: transparent; }
+
+/* ---------- phone mockup ---------- */
+.hero-phone { display: flex; flex-direction: column; align-items: center; }
+.phone {
+  width: 270px; aspect-ratio: 9 / 18.5;
+  background: #000; border-radius: 2.6rem;
+  border: 1px solid rgba(245, 244, 240, 0.22);
+  box-shadow: 0 0 0 10px #161618, 0 30px 80px rgba(0, 0, 0, 0.7), 0 0 90px rgba(255, 49, 49, 0.08);
+  position: relative; overflow: hidden;
+}
+.phone-notch {
+  position: absolute; top: 0.7rem; left: 50%; transform: translateX(-50%);
+  width: 90px; height: 22px; background: #161618; border-radius: 999px; z-index: 3;
+}
+.reel { position: absolute; inset: 0; display: flex; flex-direction: column; }
+.reel-progress { height: 3px; background: rgba(255,255,255,0.15); margin: 0.9rem 0.9rem 0; border-radius: 2px; overflow: hidden; }
+.reel-progress span {
+  display: block; height: 100%; width: 0; background: var(--accent);
+}
+.reel-progress span.run { animation: bar 2.5s linear forwards; }
+@keyframes bar { from { width: 0; } to { width: 100%; } }
+.reel-top {
+  display: flex; justify-content: space-between; align-items: center;
+  padding: 0.55rem 1rem 0; font-size: 0.68rem; font-weight: 800; letter-spacing: 0.18em;
+}
+.reel-stage {
+  flex: 1; display: flex; align-items: center; justify-content: center;
+  padding: 0 1.4rem; text-align: center;
+}
+.reel-card {
+  font-size: 1.28rem; font-weight: 800; line-height: 1.35;
+  opacity: 0; transform: translateY(10px);
+  transition: opacity 0.35s ease, transform 0.35s ease;
+}
+.reel-card.show { opacity: 1; transform: none; }
+.reel-card.final { font-size: 2.6rem; color: var(--accent); }
+.reel-actions {
+  position: absolute; right: 0.7rem; bottom: 4.2rem;
+  display: flex; flex-direction: column; gap: 1rem;
+  color: #fff; opacity: 0.9;
+}
+.reel-actions svg { width: 26px; height: 26px; fill: currentColor; }
+.reel-caption {
+  padding: 0 1rem 1.1rem; font-size: 0.72rem; color: rgba(255,255,255,0.85);
+}
+.reel-caption strong { color: #fff; }
+.phone-note { color: var(--muted); font-size: 0.8rem; margin-top: 1.25rem; text-align: center; max-width: 20rem; }
+
+/* ---------- sections ---------- */
+.section {
+  max-width: 1200px; margin: 0 auto; padding: 5rem 2rem;
+  border-top: 1px solid var(--line);
+}
+.section-label {
+  color: var(--accent); font-size: 0.78rem; font-weight: 700;
+  letter-spacing: 0.22em; text-transform: uppercase; margin-bottom: 1rem;
+}
+.section h2 {
+  font-size: clamp(2rem, 4.5vw, 3.2rem); font-weight: 900;
+  letter-spacing: -0.02em; margin-bottom: 1rem; line-height: 1.05;
+}
+.section-sub { color: var(--muted); max-width: 42rem; margin-bottom: 2.5rem; font-size: 1.05rem; }
+
+/* manifesto */
+.manifesto-lines { list-style: none; counter-reset: m; }
+.manifesto-lines li {
+  font-size: clamp(1.6rem, 3.6vw, 2.6rem); font-weight: 900;
+  letter-spacing: -0.015em; line-height: 1.2;
+  padding: 1.4rem 0; border-bottom: 1px solid var(--line);
+  display: flex; gap: 1.5rem; align-items: baseline;
+}
+.manifesto-lines li::before {
+  counter-increment: m; content: "0" counter(m);
+  font-size: 0.8rem; font-weight: 700; color: var(--accent); letter-spacing: 0.1em;
+}
+.manifesto-lines li em { font-style: normal; color: var(--accent); }
+.manifesto-lines li:last-child { border-bottom: none; }
+
+/* cards */
+.cards { display: grid; grid-template-columns: repeat(auto-fit, minmax(230px, 1fr)); gap: 1px; background: var(--line); border: 1px solid var(--line); }
+.card { background: var(--bg-soft); padding: 2rem 1.75rem; transition: background 0.2s; }
+.card:hover { background: #17171a; }
+.card-num { color: var(--accent); font-weight: 800; font-size: 0.8rem; letter-spacing: 0.15em; margin-bottom: 1rem; }
+.card h3 { font-size: 1.3rem; font-weight: 800; margin-bottom: 0.75rem; }
+.card p:last-child { color: var(--muted); font-size: 0.95rem; }
+
+/* latest drop */
+.latest { background: var(--bg-soft); border-top: 1px solid var(--line); border-bottom: 1px solid var(--line); }
+.drop-cards { list-style: none; counter-reset: d; max-width: 46rem; }
+.drop-cards li {
+  counter-increment: d;
+  padding: 0.9rem 0; border-bottom: 1px solid var(--line);
+  font-size: 1.12rem; font-weight: 500;
+  display: flex; gap: 1.25rem; align-items: baseline;
+}
+.drop-cards li::before {
+  content: counter(d, decimal-leading-zero);
+  font-size: 0.72rem; font-weight: 700; color: var(--muted); min-width: 2rem;
+}
+.drop-cards li strong { color: var(--accent); }
+.drop-cards li.final {
+  font-size: 1.8rem; font-weight: 900; color: var(--accent);
+  border-bottom: none; padding-top: 1.4rem;
+}
+.sources { color: var(--muted); font-size: 0.85rem; margin-top: 1.75rem; letter-spacing: 0.03em; }
+
+/* steps */
+.steps { display: grid; grid-template-columns: repeat(auto-fit, minmax(230px, 1fr)); gap: 2.5rem; }
+.step-num {
+  font-size: 3.4rem; font-weight: 900; color: transparent;
+  -webkit-text-stroke: 1.5px var(--accent); line-height: 1; margin-bottom: 1rem;
+}
+.step h3 { font-size: 1.35rem; font-weight: 800; margin-bottom: 0.6rem; }
+.step p { color: var(--muted); }
+
+/* footer */
+footer {
+  border-top: 1px solid var(--line);
+  padding: 3.5rem 2rem; text-align: center;
+}
+.foot-brand { font-weight: 900; letter-spacing: 0.14em; margin-bottom: 0.5rem; }
+.foot-brand::after {
+  content: ""; display: inline-block; width: 0.5em; height: 0.5em;
+  background: var(--accent); margin-left: 0.5em;
+}
+.foot-line { color: var(--muted); font-size: 0.9rem; }
+
+/* ---------- responsive ---------- */
+@media (max-width: 900px) {
+  .hero { grid-template-columns: 1fr; gap: 3rem; padding-top: 3.5rem; }
+  .nav .links { gap: 1rem; }
+  .nav .links a { font-size: 0.72rem; }
+  .phone { width: 240px; }
+}
+@media (prefers-reduced-motion: reduce) {
+  .reel-progress span.run { animation: none; width: 100%; }
+}
