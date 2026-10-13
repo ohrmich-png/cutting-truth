@@ -13,14 +13,16 @@ jobs:
       - name: Fetch GDELT world headlines
         run: |
           python3 - << 'EOF'
-          import json, urllib.request, urllib.parse, datetime, time
+          import json, re, urllib.request, urllib.parse, datetime, time
           q = urllib.parse.urlencode({
               "query": ("(domain:reuters.com OR domain:apnews.com OR domain:bbc.com "
-                        "OR domain:cnn.com OR domain:aljazeera.com OR domain:theguardian.com "
-                        "OR domain:france24.com OR domain:dw.com OR domain:npr.org) sourcelang:eng toneabs>2"),
+                        "OR domain:cnn.com OR domain:aljazeera.com "
+                        "OR domain:france24.com OR domain:dw.com) sourcelang:eng"),
               "mode": "artlist",
-              "maxrecords": 60, "format": "json", "sort": "hybridrel"})
+              "maxrecords": 100, "format": "json", "sort": "hybridrel"})
           url = "https://api.gdeltproject.org/api/v2/doc/doc?" + q
+          SOFT = re.compile(r"\b(how to|quiz|quizzes|recipe|horoscope|fashion|travel guide|"
+                            r"gift guide|top \d+|best \d+|review:|opinion:|editorial:)\b", re.I)
           arts = []
           for attempt in range(4):
               try:
@@ -28,21 +30,26 @@ jobs:
                   d = json.load(urllib.request.urlopen(req, timeout=90))
                   seen = set()
                   for a in d.get("articles", []):
-                      t, u = a.get("title", ""), a.get("url", "")
-                      if t and u and t not in seen:
-                          seen.add(t)
-                          arts.append({"t": t, "u": u,
-                                       "s": a.get("sourceCommonName", ""),
-                                       "d": (a.get("seendate", "") or "")[:10]})
+                      t, u = (a.get("title") or "").strip(), a.get("url", "")
+                      if not t or not u or t in seen:
+                          continue
+                      if "?" in t or SOFT.search(t):
+                          continue
+                      seen.add(t)
+                      arts.append({"t": t, "u": u,
+                                   "s": a.get("sourceCommonName", ""),
+                                   "d": (a.get("seendate", "") or "")[:10]})
+                      if len(arts) >= 40:
+                          break
                   break
               except Exception as e:
                   print(f"attempt {attempt+1} failed: {e}")
                   time.sleep(20)
           if arts:
               out = {"updated": datetime.datetime.now(datetime.timezone.utc).isoformat(),
-                     "headlines": arts[:40]}
+                     "headlines": arts}
               json.dump(out, open("headlines.json", "w"), ensure_ascii=False)
-              print(len(out["headlines"]), "headlines saved")
+              print(len(arts), "headlines saved")
           else:
               print("no headlines fetched; keeping previous file")
           EOF
