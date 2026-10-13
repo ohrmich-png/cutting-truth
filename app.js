@@ -80,7 +80,7 @@
       return '<span><a href="' + esc(h.u) + '" target="_blank" rel="noopener">' + esc(h.t) + "</a></span><i></i>";
     }).join("");
     track.innerHTML = html + html; // duplicated for the seamless -50% loop
-    track.style.animationDuration = Math.max(30, items.length * 4) + "s";
+    track.style.animationDuration = Math.max(30, items.length * 7) + "s";
     var ticker = track.closest(".ticker");
     if (ticker) ticker.removeAttribute("aria-hidden");
   }).catch(function () { /* keep the static brand ticker as fallback */ });
