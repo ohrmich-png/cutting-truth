@@ -100,7 +100,7 @@
     var half = items.map(function (w) {
       return "<span>" + esc(w.city) + " <b>" + w.temp + "&deg;</b> " + esc(w.cond) + "</span><i></i>";
     }).join("");
-    track.innerHTML = half + half; // duplicate for seamless loop
+    track.innerHTML = half;
   }).catch(function () {
     var strip = document.querySelector(".wxstrip");
     if (strip) strip.style.display = "none";
