@@ -1,0 +1,42 @@
+name: headlines
+on:
+  schedule:
+    - cron: "*/15 * * * *"
+  workflow_dispatch:
+permissions:
+  contents: write
+jobs:
+  fetch:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - name: Fetch GDELT world headlines
+        run: |
+          python3 - << 'EOF'
+          import json, urllib.request, urllib.parse, datetime, time
+          q = urllib.parse.urlencode({
+              "query": "sourcelang:eng", "mode": "artlist",
+              "maxrecords": 60, "format": "json", "sort": "datedesc"})
+          req = urllib.request.Request(
+              "https://api.gdeltproject.org/api/v2/doc/doc?" + q,
+              headers={"User-Agent": "cutting-truth-ticker/1.0"})
+          d = json.load(urllib.request.urlopen(req, timeout=90))
+          arts, seen = [], set()
+          for a in d.get("articles", []):
+              t, u = a.get("title", ""), a.get("url", "")
+              if t and u and t not in seen:
+                  seen.add(t)
+                  arts.append({"t": t, "u": u,
+                               "s": a.get("sourceCommonName", ""),
+                               "d": (a.get("seendate", "") or "")[:10]})
+          out = {"updated": datetime.datetime.now(datetime.timezone.utc).isoformat(),
+                 "headlines": arts[:40]}
+          json.dump(out, open("headlines.json", "w"), ensure_ascii=False)
+          print(len(out["headlines"]), "headlines saved")
+          EOF
+      - name: Commit headlines
+        run: |
+          git config user.name "scarlett"
+          git config user.email "scarlett@local"
+          git add headlines.json
+          git diff --cached --quiet || (git commit -m "headlines refresh" && git push)
