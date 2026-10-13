@@ -1,0 +1,51 @@
+name: weather
+on:
+  schedule:
+    - cron: "7 * * * *"
+  workflow_dispatch:
+permissions:
+  contents: write
+jobs:
+  fetch:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - name: Fetch world capitals weather from Open-Meteo
+        run: |
+          python3 - << 'EOF'
+          import json, urllib.request, datetime
+          CITIES = [
+              ("London", 51.5074, -0.1278), ("Paris", 48.8566, 2.3522),
+              ("Berlin", 52.52, 13.405), ("Rome", 41.9028, 12.4964),
+              ("Madrid", 40.4168, -3.7038), ("Washington", 38.9072, -77.0369),
+              ("Jerusalem", 31.7683, 35.2137), ("Moscow", 55.7558, 37.6173),
+              ("Beijing", 39.9042, 116.4074), ("Tokyo", 35.6762, 139.6503),
+              ("New Delhi", 28.6139, 77.209), ("Cairo", 30.0444, 31.2357),
+          ]
+          WMO = {0:"Clear",1:"Clear",2:"Partly cloudy",3:"Overcast",45:"Fog",48:"Fog",
+                 51:"Drizzle",53:"Drizzle",55:"Drizzle",61:"Rain",63:"Rain",65:"Heavy rain",
+                 71:"Snow",73:"Snow",75:"Heavy snow",80:"Showers",81:"Showers",82:"Showers",
+                 95:"Storm",96:"Storm",99:"Storm"}
+          lats = ",".join(str(c[1]) for c in CITIES)
+          lons = ",".join(str(c[2]) for c in CITIES)
+          url = (f"https://api.open-meteo.com/v1/forecast?latitude={lats}&longitude={lons}"
+                 f"&current=temperature_2m,weather_code&timezone=auto")
+          req = urllib.request.Request(url, headers={"User-Agent": "cutting-truth-weather/1.0"})
+          data = json.load(urllib.request.urlopen(req, timeout=60))
+          items = []
+          for (name, _, _), loc in zip(CITIES, data if isinstance(data, list) else [data]):
+              cur = loc["current"]
+              items.append({"city": name,
+                            "temp": round(cur["temperature_2m"]),
+                            "cond": WMO.get(cur["weather_code"], "")})
+          out = {"updated": datetime.datetime.now(datetime.timezone.utc).isoformat(),
+                 "weather": items}
+          json.dump(out, open("weather.json", "w"), ensure_ascii=False)
+          print(len(items), "cities saved")
+          EOF
+      - name: Commit weather
+        run: |
+          git config user.name "scarlett"
+          git config user.email "scarlett@local"
+          git add weather.json
+          git diff --cached --quiet || (git commit -m "weather refresh" && git push)
