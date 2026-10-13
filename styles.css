@@ -275,3 +275,36 @@ footer {
 
 /* ---------- comments ---------- */
 .comments .giscus, #feedback .giscus { max-width: 46rem; }
+
+/* ---------- world weather strip (slim, under the ticker) ---------- */
+.wxstrip {
+  overflow: hidden;
+  background: #0a0a0b;
+  border-bottom: 1px solid var(--line);
+}
+.wxstrip-track {
+  display: inline-flex;
+  align-items: center;
+  white-space: nowrap;
+  padding: 0.32rem 0;
+  animation: wxstrip-scroll 60s linear infinite;
+  will-change: transform;
+}
+.wxstrip:hover .wxstrip-track { animation-play-state: paused; }
+.wxstrip-track span {
+  font-size: 0.62rem; font-weight: 500; letter-spacing: 0.18em;
+  color: var(--muted, #8a8a8e); padding: 0 1.4rem;
+  text-transform: uppercase;
+}
+.wxstrip-track span b { color: var(--ink); font-weight: 700; }
+.wxstrip-track i {
+  width: 0.32em; height: 0.32em; background: var(--line, #2a2a2d);
+  border-radius: 50%; flex: none;
+}
+@keyframes wxstrip-scroll {
+  from { transform: translateX(0); }
+  to { transform: translateX(-50%); }
+}
+@media (prefers-reduced-motion: reduce) {
+  .wxstrip-track { animation: none; }
+}
