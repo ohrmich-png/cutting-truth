@@ -61,3 +61,27 @@
     show(i);
   }, DURATION);
 })();
+
+// Live world-headlines ticker — fed by headlines.json (GDELT, refreshed every 15 min).
+(function () {
+  var track = document.querySelector(".ticker-track");
+  if (!track) return;
+  var st = document.createElement("style");
+  st.textContent = ".ticker-track span a{color:inherit;text-decoration:none}.ticker-track span a:hover{text-decoration:underline}";
+  document.head.appendChild(st);
+  fetch("headlines.json", { cache: "no-store" }).then(function (r) {
+    if (!r.ok) throw new Error("no data");
+    return r.json();
+  }).then(function (d) {
+    var items = (d.headlines || []).slice(0, 30);
+    if (!items.length) throw new Error("empty");
+    var esc = function (s) { return String(s).replace(/&/g, "&amp;").replace(/</g, "&lt;").replace(/>/g, "&gt;").replace(/"/g, "&quot;"); };
+    var html = items.map(function (h) {
+      return '<span><a href="' + esc(h.u) + '" target="_blank" rel="noopener">' + esc(h.t) + "</a></span><i></i>";
+    }).join("");
+    track.innerHTML = html + html; // duplicated for the seamless -50% loop
+    track.style.animationDuration = Math.max(30, items.length * 4) + "s";
+    var ticker = track.closest(".ticker");
+    if (ticker) ticker.removeAttribute("aria-hidden");
+  }).catch(function () { /* keep the static brand ticker as fallback */ });
+})();
