@@ -85,3 +85,24 @@
     if (ticker) ticker.removeAttribute("aria-hidden");
   }).catch(function () { /* keep the static brand ticker as fallback */ });
 })();
+
+// World capitals weather strip — fed by weather.json (Open-Meteo, refreshed hourly).
+(function () {
+  var track = document.querySelector(".wxstrip-track");
+  if (!track) return;
+  fetch("weather.json", { cache: "no-store" }).then(function (r) {
+    if (!r.ok) throw new Error("no data");
+    return r.json();
+  }).then(function (d) {
+    var items = d.weather || [];
+    if (!items.length) throw new Error("empty");
+    var esc = function (s) { return String(s).replace(/&/g, "&amp;").replace(/</g, "&lt;").replace(/>/g, "&gt;"); };
+    var half = items.map(function (w) {
+      return "<span>" + esc(w.city) + " <b>" + w.temp + "&deg;</b> " + esc(w.cond) + "</span><i></i>";
+    }).join("");
+    track.innerHTML = half + half; // duplicate for seamless loop
+  }).catch(function () {
+    var strip = document.querySelector(".wxstrip");
+    if (strip) strip.style.display = "none";
+  });
+})();
