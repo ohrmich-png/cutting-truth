@@ -19,7 +19,7 @@ jobs:
                         "OR domain:cnn.com OR domain:aljazeera.com OR domain:theguardian.com "
                         "OR domain:france24.com OR domain:dw.com OR domain:npr.org)"),
               "mode": "artlist",
-              "maxrecords": 60, "format": "json", "sort": "datedesc"})
+              "maxrecords": 60, "format": "json", "sort": "hybridrel"})
           url = "https://api.gdeltproject.org/api/v2/doc/doc?" + q
           arts = []
           for attempt in range(4):
